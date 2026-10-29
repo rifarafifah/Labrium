@@ -346,7 +346,7 @@ function navigate(id){active=id;filterTerm='';editingId=null;formOpen=false;el('
 const checkedExportIds=()=>SPEC.map(s=>s.id).filter(id=>selectedExportIds.has(id));
 function exportPickerHTML(){
  const n=selectedExportIds.size;
- return `<div class="panel export-panel" id="export-panel"><div class="panel-head"><div><h2>Unduh format pilihanmu</h2><p>Centang satu atau beberapa format. Hanya format yang dipilih yang akan diunduh.</p></div><span class="chip">19 format tersedia</span></div><div class="export-toolbar"><div class="export-guide"><span class="export-step">1</span><strong>Pilih format</strong><span class="export-hint">Bisa pilih beberapa sekaligus</span></div><div class="export-actions"><button class="btn" type="button" onclick="selectAllExports(true)">Pilih Semua</button><button class="btn" type="button" onclick="selectAllExports(false)">Kosongkan</button></div></div><div class="export-groups">${GROUPS.map(group=>`<fieldset class="export-group"><legend>${esc(group[1])}</legend><div class="export-choices">${group[2].map(id=>{const s=spec(id);return `<label class="export-choice"><input class="format-export-check" type="checkbox" value="${id}" onchange="toggleExportFormat('${id}',this.checked)" ${selectedExportIds.has(id)?'checked':''}/><span class="format-export-code">${id}</span><span class="export-choice-content"><b>${esc(s.name)}</b><small>${count(id)} data tersimpan</small></span></label>`}).join('')}</div></fieldset>`).join('')}</div><div class="export-footer"><div class="export-guide"><span class="export-step">2</span><div><strong>Unduh dokumen</strong><p id="export-summary" class="export-summary" role="status" aria-live="polite">${n?`${n} format dipilih: ${checkedExportIds().join(', ')}`:'Belum ada format dipilih'}</p></div></div><div class="export-downloads"><button id="export-selected-docx" class="btn primary" type="button" ${!n?'disabled':''} onclick="exportSelected('docx')">${svg('download')} Unduh DOCX</button><button id="export-selected-pdf" class="btn dark" type="button" ${!n?'disabled':''} onclick="exportSelected('pdf')">${svg('download')} Unduh PDF</button></div></div><div class="export-explain"><b>1 format dipilih:</b> langsung diunduh sebagai satu file DOCX/PDF. <b>2 atau lebih:</b> diunduh sebagai ZIP berisi file terpisah untuk setiap format yang kamu pilih. Format lain tidak disertakan.</div></div>`;
+ return `<div class="panel export-panel" id="export-panel"><div class="panel-head"><div><h2>Unduh format pilihanmu</h2><p>Centang satu atau beberapa format. Hanya format yang dipilih yang akan diunduh.</p></div><span class="chip">19 format tersedia</span></div><div class="export-toolbar"><div class="export-guide"><span class="export-step">1</span><strong>Pilih format</strong><span class="export-hint">Bisa pilih beberapa sekaligus</span></div><div class="export-actions"><button class="btn" type="button" onclick="selectAllExports(true)">Pilih Semua</button><button class="btn" type="button" onclick="selectAllExports(false)">Kosongkan</button></div></div><div class="export-groups">${GROUPS.map(group=>`<fieldset class="export-group"><legend>${esc(group[1])}</legend><div class="export-choices">${group[2].map(id=>{const s=spec(id);return `<label class="export-choice"><input class="format-export-check" type="checkbox" value="${id}" onchange="toggleExportFormat('${id}',this.checked)" ${selectedExportIds.has(id)?'checked':''}/><span class="format-export-code">${id}</span><span class="export-choice-content"><b>${esc(s.name)}</b><small>${count(id)} data tersimpan</small></span></label>`}).join('')}</div></fieldset>`).join('')}</div><div class="export-footer"><div class="export-guide"><span class="export-step">2</span><div><strong>Unduh dokumen</strong><p id="export-summary" class="export-summary" role="status" aria-live="polite">${n?`${n} format dipilih: ${checkedExportIds().join(', ')}`:'Belum ada format dipilih'}</p></div></div><div class="export-downloads"><button id="export-selected-docx" class="btn primary" type="button" ${!n?'disabled':''} onclick="exportSelected('docx')">${svg('download')} Unduh DOCX</button><button id="export-selected-pdf" class="btn dark" type="button" ${!n?'disabled':''} onclick="exportSelected('pdf')">${svg('download')} Unduh PDF</button></div></div><div class="export-explain"><b>Unduh DOCX:</b> satu atau beberapa format pilihan digabung dalam satu file Word (.docx). <b>Unduh PDF:</b> satu format langsung PDF; beberapa format dikemas dalam ZIP berisi PDF terpisah. Format yang tidak dipilih tidak disertakan.</div></div>`;
 }
 function toggleExportFormat(id,checked){if(!spec(id))return;if(checked)selectedExportIds.add(id);else selectedExportIds.delete(id);updateExportUI()}
 function selectAllExports(checked){selectedExportIds=new Set(checked?SPEC.map(s=>s.id):[]);document.querySelectorAll('.format-export-check').forEach(input=>{input.checked=checked});updateExportUI()}
@@ -500,7 +500,7 @@ function xTable(s){
 function xSignatures(settings){
  const widths=[5040,5040,5040];
  const paragraph=(value,after=0,bold=false,under=false)=>`<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="${after}"/></w:pPr><w:r><w:rPr>${bold?'<w:b/>':''}${under?'<w:u w:val="single"/>':''}<w:sz w:val="16"/></w:rPr><w:t xml:space="preserve">${xmlEscape(value)}</w:t></w:r></w:p>`;
- const cells=signatureParts(settings).map((x,i)=>`<w:tc><w:tcPr><w:tcW w:w="${widths[i]}" w:type="dxa"/><w:vAlign w:val="top"/></w:tcPr>${paragraph(x.intro||' ',20)}${paragraph(x.role,0,true)}${paragraph(' ',1050)}${paragraph(x.name||'( ..................................... )',12,true,true)}${paragraph(x.nip||'NIP/NIK: ........................')}</w:tc>`).join('');
+ const cells=signatureParts(settings).map((x,i)=>`<w:tc><w:tcPr><w:tcW w:w="${widths[i]}" w:type="dxa"/><w:vAlign w:val="top"/></w:tcPr>${paragraph(x.intro||' ',20)}${paragraph(x.role,0,true)}${paragraph(' ',1050)}${paragraph(x.name||'( ..................................... )',12,true,true)}${paragraph(x.nip||'NIP/NIK: ........................')}</w:tc>`).join('');
  return `<w:tbl><w:tblPr><w:tblW w:w="15120" w:type="dxa"/><w:tblBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/><w:right w:val="nil"/><w:insideH w:val="nil"/><w:insideV w:val="nil"/></w:tblBorders></w:tblPr><w:tblGrid>${widths.map(w=>`<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid><w:tr><w:trPr><w:cantSplit/></w:trPr>${cells}</w:tr></w:tbl>`;
 }
 function docxXml(formats){
@@ -522,7 +522,16 @@ function docxXml(formats){
 }
 async function makeDocxBlob(formatId){
  if(typeof JSZip==='undefined')throw Error('Modul DOCX tidak tersedia');
- const z=new JSZip();z.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');z.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');z.file('word/document.xml',docxXml(selected(formatId)));return z.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+ // Satu format atau gabungan format menghasilkan SATU dokumen .docx,
+ // bukan arsip .zip yang harus dibuka secara manual.
+ const formats=Array.isArray(formatId)?formatId.map(id=>spec(id)).filter(Boolean):selected(formatId);
+ if(!formats.length)throw Error('Tidak ada format yang dipilih');
+ const z=new JSZip();
+ z.file('[Content_Types].xml','<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+ z.file('_rels/.rels','<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+ z.file('word/document.xml',docxXml(formats));
+ const bytes=await z.generateAsync({type:'uint8array',compression:'DEFLATE',compressionOptions:{level:6}});
+ return new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
 }
 async function exportDocx(formatId=active){try{const blob=await makeDocxBlob(formatId);download(blob,filename('docx',formatId));toast('Format '+formatId+' berhasil diunduh sebagai DOCX')}catch(e){console.error(e);toast('Gagal membuat DOCX')}}
 // Generator PDF mandiri: A4 horizontal, tabel multi-halaman, tanpa pustaka atau koneksi internet.
@@ -549,8 +558,11 @@ function makePDF(formats){
  // Padding kiri-kanan per sel (satuan pt) untuk semua tabel ekspor PDF.
  // Kolom nomor kecil lebih hemat, kolom berisi nama/keterangan lebih lapang.
  const cellPadPt=(i)=>i===0?3.5:colWidths[i]<42?4.8:colWidths[i]<58?6.3:9;
- function centered(xCenter,y,text,size=8,bold=false){const t=pdfClean(text);pdfWriteText(page,xCenter-t.length*size*.24,y,t,size,bold)}
- function newPage(s,continued=false){
+ function centered(xCenter,y,text,size=8,bold=false){
+  const t=pdfClean(text);
+  pdfWriteText(page,xCenter-pdfWidth(t,size,bold)/2,y,t,size,bold);
+ }
+ function newPage(s,continued=false,withTable=true){
   const st=displaySettings(s);
   page=pdfPage();pages.push(page);
   pdfWriteText(page,margin,H-29,'LEMBAR ADMINISTRASI LABORATORIUM',7.5,true,0.04,.48,.44);
@@ -561,7 +573,8 @@ function makePDF(formats){
   const info=`LABORATORIUM: ${st.lab||'...................'}  |  TAHUN PELAJARAN: ${st.tahun||'-'}  |  SEMESTER: ${st.semester||'-'}${st.npsn?'  |  NPSN: '+st.npsn:''}`;
   centered(W/2,H-85,info,7.6);
   if(st.alamatSekolah)centered(W/2,H-97,st.alamatSekolah,7);
-  page.y=H-107;drawHeader();
+  page.y=H-107;
+  if(withTable)drawHeader();
  }
  function drawHeader(){
   const sf=columns[0];let x=margin;const labels=['No.',...sf.fields.map(f=>f[1])];
@@ -576,7 +589,19 @@ function makePDF(formats){
   const isBlank=Object.keys(r).length===0;
   const height=isBlank?18:Math.max(25,...wrapped.map(lines=>lines.length*(font+2)+11));
   let newSheet=false;
-  if(page.y-height<98){newPage(s,true);newSheet=true;}
+  // Jika perlu halaman tambahan, sertakan tiga baris terakhir
+  // agar halaman pengesahan tidak berdiri sendiri.
+  if(index===Math.max(0,rows.length-3) && index>0){
+   const remainingHeight=rows.slice(index).reduce((sum,item)=>{
+    const cellVals=['0',...s.fields.map(f=>formatValue(item[f[0]],f))];
+    const lineCounts=cellVals.map((value,k)=>pdfWrap(value,colWidths[k]-2*cellPadPt(k),font).length);
+    return sum+(Object.keys(item).length===0?18:Math.max(25,...lineCounts.map(n=>n*(font+2)+11)));
+   },0);
+   if(page.y-remainingHeight<226){newPage(s,true);newSheet=true;}
+  }
+  if(page.y-height<98 || (index===rows.length-1 && page.y-height<226)){
+   newPage(s,true);newSheet=true;
+  }
   let x=margin;
   wrapped.forEach((lines,i)=>{
    const key=i===0?null:s.fields[i-1][0],grouped=key&&mergeKeys(s).includes(key);
@@ -600,18 +625,26 @@ function makePDF(formats){
  }
  function sign(s){
   const st=displaySettings(s);
-  if(page.y<162)newPage(s,true);
-  page.y-=13;
-  pdfWriteText(page,margin,page.y,`Jumlah data terisi: ${count(s.id)}`,7,false,.32,.40,.47);
-  const yDate=page.y-16;
-  const dateLabel=reportPlaceDate();pdfWriteText(page,W-margin-pdfWidth(dateLabel,8),yDate,dateLabel,8);
+  // Semua bagian tanda tangan (jabatan, garis nama dan NIP/NIK) harus muat
+  // dan memakai garis dasar yang sama pada ketiga kolom.
+  if(page.y<226)newPage(s,true,false);
+  const countY=page.y-13;
+  pdfWriteText(page,margin,countY,`Jumlah data terisi: ${count(s.id)}`,7,false,.32,.40,.47);
+  const yDate=countY-21;
+  const dateLabel=reportPlaceDate();
+  pdfWriteText(page,W-margin-pdfWidth(dateLabel,8),yDate,dateLabel,8);
   const roles=signatureParts(st),width=tableW/3;
+  const introY=yDate-24,roleY=yDate-40,nameY=yDate-111,nipY=yDate-127;
   for(let i=0;i<3;i++){
    const sx=margin+width*(i+.5),info=roles[i];
-   centered(sx,yDate-25,info.intro||' ',8);
-   centered(sx,yDate-39,info.role,8,true);
-   centered(sx,yDate-103,info.name||'( ..................................... )',8,true);
-   centered(sx,yDate-118,info.nip||'NIP/NIK: ........................',7);
+   if(info.intro)centered(sx,introY,info.intro,8);
+   const roleLines=pdfWrap(info.role,width-28,8).slice(0,2);
+   roleLines.forEach((line,j)=>centered(sx,roleY-j*11,line,8,true));
+   if(info.name?.trim())centered(sx,nameY,info.name.trim(),8,true);
+   // Garis tanda tangan sama panjang dan sama tinggi di semua kolom.
+   const halfLine=Math.min(83,width/2-22),lineY=nameY-3;
+   page.ops.push(`0.12 0.23 0.36 RG 0.75 w ${pdfNum(sx-halfLine)} ${pdfNum(lineY)} m ${pdfNum(sx+halfLine)} ${pdfNum(lineY)} l S`);
+   centered(sx,nipY,info.nip?.trim()||'NIP/NIK: ........................',7);
   }
  }
  for(const s of formats){
@@ -641,17 +674,21 @@ async function exportSelected(type){
  const ids=checkedExportIds();
  if(!ids.length){toast('Centang setidaknya satu format');return}
  if(ids.length===1){if(type==='docx')return exportDocx(ids[0]);return exportPdf(ids[0]);}
- if(typeof JSZip==='undefined'){toast('Modul ZIP tidak tersedia');return;}
  exportInProgress=true;updateExportUI();
  try{
-  const archive=new JSZip();
-  for(const id of ids){
-   const blob=type==='docx'?await makeDocxBlob(id):makePDF(selected(id));
-   archive.file(filename(type,id),blob);
+  if(type==='docx'){
+   // Semua pilihan Word menjadi satu .docx, dipisahkan dengan halaman baru.
+   const blob=await makeDocxBlob(ids);
+   download(blob,`Inventaris_Laboratorium_${ids.length}_Format.docx`);
+   toast(`${ids.length} format berhasil diunduh dalam satu dokumen Word (.docx)`);
+  }else{
+   if(typeof JSZip==='undefined')throw Error('Modul ZIP tidak tersedia');
+   const archive=new JSZip();
+   for(const id of ids)archive.file(filename('pdf',id),makePDF(selected(id)));
+   const zipBlob=await archive.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+   download(zipBlob,`Laborium_${ids.length}_Format_Pilihan_PDF.zip`);
+   toast(`${ids.length} format berhasil diunduh (ZIP berisi ${ids.length} file PDF)`);
   }
-  const zipBlob=await archive.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
-  download(zipBlob,`Laborium_${ids.length}_Format_Pilihan_${type.toUpperCase()}.zip`);
-  toast(`${ids.length} format berhasil diunduh (ZIP berisi ${ids.length} file ${type.toUpperCase()})`);
  }catch(e){console.error(e);toast('Gagal menyiapkan unduhan pilihan')}
  finally{exportInProgress=false;updateExportUI();}
 }
